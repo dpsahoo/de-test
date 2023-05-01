@@ -33,10 +33,15 @@ def create_exploded_df(orig_df):
 def avg_salary(df_exploded):
     # What is the average salary for each profile? Display the first 10 results, ordered by lastName in descending order.
     # compute average salary for each profile
+    # calculate the average salary across the whole dataset
     df_avg_salary = df_exploded.groupBy("id", "firstName", "lastName").agg(avg("jobHistory.salary").alias("avg_salary"))
 
     # display first 10 results ordered by lastName in descending order
+    print("Average salary for each profile:")
     df_avg_salary.orderBy("lastName", ascending=False).show(10, truncate=False)
+
+    avg_salary = df_exploded.select(avg("jobHistory.salary")).collect()[0][0]
+    print("Average salary across the whole dataset: {}".format(avg_salary))
 
 
 if __name__ == '__main__':
@@ -46,9 +51,8 @@ if __name__ == '__main__':
     df_exploded = create_exploded_df(df)
 
     # Business queries
-    print("Average salary for each profile:")
     avg_salary(df_exploded)
-
     
+
 
 
