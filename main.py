@@ -1,4 +1,5 @@
 from pyspark.sql import SparkSession
+from pyspark.sql.functions import explode, avg
 
 def create_session():
     # Create a Spark Session
@@ -29,6 +30,13 @@ def create_exploded_df(orig_df):
     return df_exploded
 
 
+def avg_salary(df_exploded):
+    # What is the average salary for each profile? Display the first 10 results, ordered by lastName in descending order.
+    # compute average salary for each profile
+    df_avg_salary = df_exploded.groupBy("id", "firstName", "lastName").agg(avg("jobHistory.salary").alias("avg_salary"))
+
+    # display first 10 results ordered by lastName in descending order
+    df_avg_salary.orderBy("lastName", ascending=False).show(10, truncate=False)
 
 
 if __name__ == '__main__':
@@ -38,6 +46,9 @@ if __name__ == '__main__':
     df_exploded = create_exploded_df(df)
 
     # Business queries
+    print("Average salary for each profile:")
+    avg_salary(df_exploded)
 
+    
 
 
