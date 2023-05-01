@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import explode, avg, desc, max, when, col
+from pyspark.sql.functions import explode, avg, desc, max, when, col, year, count, current_date
 
 def create_session():
     # Create a Spark Session
@@ -73,6 +73,25 @@ def current_most_money_maker(df_exploded):
 
     df_max_salary.orderBy(desc("maxSalary"), desc("lastName"), desc("firstName")).limit(1).show(truncate=False)
 
+def most_popular_job_2019(df_exploded):
+    ''' What was the most popular job title that started in 2019?'''
+
+    most_popular_job_2019 = df_exploded.filter(year('jobHistory.fromDate') == 2019) \
+    .groupBy('jobHistory.title') \
+    .agg(count('jobHistory.title').alias('count')) \
+    .orderBy(desc('count'), 'jobHistory.title')  
+
+    # most_popular_job_2019.show(truncate=False)
+    print('The most popular job title that started in 2019 is:', most_popular_job_2019.select('title').first()[0] )
+
+def num_people_working(df_exploded):
+    '''Get number of people currently working'''
+    num_currently_working = df_exploded.filter(df_exploded.jobHistory.toDate.isNull() | (df_exploded.jobHistory.toDate >= current_date())).count()
+
+    print('People currently working: ', num_currently_working)
+
+
+
 
 if __name__ == '__main__':
     # Base functions
@@ -84,7 +103,10 @@ if __name__ == '__main__':
     avg_salary(df_exploded)
     top_bottom_jobs(df_exploded)
     current_most_money_maker(df_exploded)
+    most_popular_job_2019(df_exploded)
+    num_people_working(df_exploded)
     
+
 
 
 
