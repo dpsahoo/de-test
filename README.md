@@ -1,10 +1,20 @@
-# Data Engineering test - Instructions to run the PySpark code 
+# Data Engineering test
+
+## Intro
+
+This repo contains code mainly written in Python to answer the business queries requested as part of the Data Engineering test.
 
 
-## 1 DOWNLOAD THE TEST DATA FILE 
+## Instructions to run the PySpark code 
+
+### Please follow the below steps 
+
+## 1. DOWNLOAD THE TEST DATA FILE [IGNORE THIS STEP]
+
 NOTE: IGNORE THIS STEP. The downloading and unzip of the file is handled in Step3 and Step4.
-Download the zipped test file into your application root directory and unzip it.
 
+
+Download the zipped test file into your application root directory and unzip it.
 ### `unzip -d /dest/directory/ test-data.zip`
 
 Source: 
@@ -14,8 +24,10 @@ note: This is password protected. PLease use the password supplied in the mail.
 The unzipped .json files will be in /test-data folder
 
 
-## 2. The main code is in main.py
+## 2. main.py
 
+The PySpark is structured into multiple methods for each use case. 
+Simple use cases are sometimes bundled into a single method.
 
 ## 3. Update the ZIP file password in "Dockerfile"
 
