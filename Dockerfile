@@ -18,12 +18,18 @@ RUN apt-get update && \
 # Set environment variables
 ENV PYSPARK_PYTHON=python3
 ENV PYSPARK_DRIVER_PYTHON=python3
+ENV ZIP_PASSWORD="<Enter the ZIP file password here>"
 
 WORKDIR /app
 
 COPY requirements.txt .
-
 RUN pip install -r requirements.txt
+
+# Download the password-protected zip file from S3
+RUN wget -O /app/test-data.zip "https://coding-challenge-public.s3.ap-southeast-2.amazonaws.com/test-data.zip"
+
+# Unzip the file with the provided password
+RUN unzip -P ${ZIP_PASSWORD} /app/test-data.zip -d /app
 
 COPY main.py /app
 
