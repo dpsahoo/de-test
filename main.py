@@ -65,6 +65,7 @@ def top_bottom_jobs(df_exploded):
 
 def current_most_money_maker(df_exploded):
     '''Get the profile making the money currrently'''
+
     # Create a new dataframe using 'df_exploded' with an added column 'currentSalary' and populate with salary where toDate is null.
     df_with_current_salary = df_exploded.withColumn("currentSalary", 
                                             when(col("jobHistory.toDate").isNull(),
@@ -73,6 +74,7 @@ def current_most_money_maker(df_exploded):
     # Group by the profile i.e. id, firstName, lastName and get the max currentSalary
     df_max_salary = df_with_current_salary.groupBy("id", "firstName", "lastName").agg(max("currentSalary").alias("maxSalary"))
 
+    print('Profile making most money currently:')
     df_max_salary.orderBy(desc("maxSalary"), desc("lastName"), desc("firstName")).limit(1).show(truncate=False)
 
 def most_popular_job_2019(df_exploded):
@@ -91,7 +93,7 @@ def num_people_working(df_exploded):
     '''Get number of people currently working'''
     num_currently_working = df_exploded.filter(df_exploded.jobHistory.toDate.isNull() | (df_exploded.jobHistory.toDate >= current_date())).count()
 
-    print('People currently working: ', num_currently_working)
+    print('Total number of people currently working: ', num_currently_working)
 
 
 def person_latest_job(df_exploded):
@@ -108,6 +110,7 @@ def person_latest_job(df_exploded):
     latest_jobs_df = df_with_row_num.filter("row_num = 1")
 
     # Select only the relevant columns and display the first 10 results
+    print('Latest job for each person:')
     # latest_jobs_df.select("id", "firstName", "lastName", "jobHistory.title", "jobHistory.fromDate").orderBy("desc(lastName)", "asc(firstName)").show(10, truncate=False)
     # latest_jobs_df.select("id", "firstName", "lastName", "jobHistory.title", "jobHistory.fromDate").show(10, truncate=False)
     latest_jobs_df.select("id", "firstName", "lastName", "jobHistory.title", "jobHistory.fromDate").orderBy(desc("lastName"), asc("firstName")).show(10, truncate=False)
@@ -128,6 +131,7 @@ def  max_salary(df_exploded):
         .orderBy("lastName", "firstName") \
         .limit(10)
 
+    print('Highest paying job for each person: ')
     max_salary_df.show(truncate=False)
     return max_salary_df
 
@@ -136,6 +140,7 @@ def max_salary_parquet(max_salary_df):
     ''' 
     Write out the last result in parquet format, compressed, partitioned by the year of their highest paying job
     '''
+    print('Writing max_salary_df into a parquet file format')
     max_salary_df.write.partitionBy("year").parquet("max_salary.parquet", compression="gzip", mode="overwrite" )
 
 
@@ -154,7 +159,7 @@ if __name__ == '__main__':
     person_latest_job(df_exploded)
     max_salary_df = max_salary(df_exploded)
     max_salary_parquet(max_salary_df)
-    
+
 
 
 
