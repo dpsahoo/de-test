@@ -147,19 +147,20 @@ def max_salary_parquet(max_salary_df):
 if __name__ == '__main__':
     # Base functions
     spark_sess = create_session()
-    print("Created SPARK sess. OK")
-    # df = load_data_and_validate(spark_sess)
-    # df_exploded = create_exploded_df(df)
+    print("Created SPARK session")
 
-    # # Business queries
-    # avg_salary(df_exploded)
-    # top_bottom_jobs(df_exploded)
-    # current_most_money_maker(df_exploded)
-    # most_popular_job_2019(df_exploded)
-    # num_people_working(df_exploded)
-    # person_latest_job(df_exploded)
-    # max_salary_df = max_salary(df_exploded)
-    # max_salary_parquet(max_salary_df)
+    df = load_data_and_validate(spark_sess)
+    df_exploded = create_exploded_df(df)
+
+    # Business queries
+    avg_salary(df_exploded)
+    top_bottom_jobs(df_exploded)
+    current_most_money_maker(df_exploded)
+    most_popular_job_2019(df_exploded)
+    num_people_working(df_exploded)
+    person_latest_job(df_exploded)
+    max_salary_df = max_salary(df_exploded)
+    max_salary_parquet(max_salary_df)
 
 
 
