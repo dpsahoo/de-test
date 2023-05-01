@@ -1,5 +1,5 @@
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import explode, avg
+from pyspark.sql.functions import explode, avg, desc, max, when, col
 
 def create_session():
     # Create a Spark Session
@@ -61,6 +61,19 @@ def top_bottom_jobs(df_exploded):
     print("Bottom 5 paying jobs:")
     bottom_5.show()
 
+def current_most_money_maker(df_exploded):
+    '''Get the profile making the money currrently'''
+    # Create a new dataframe using 'df_exploded' with an added column 'currentSalary' and populate with salary where toDate is null.
+    df_with_current_salary = df_exploded.withColumn("currentSalary", 
+                                            when(col("jobHistory.toDate").isNull(),
+                                                col("jobHistory.salary")).otherwise(None))
+
+    # Group by the profile i.e. id, firstName, lastName and get the max currentSalary
+    df_max_salary = df_with_current_salary.groupBy("id", "firstName", "lastName").agg(max("currentSalary").alias("maxSalary"))
+
+    df_max_salary.orderBy(desc("maxSalary"), desc("lastName"), desc("firstName")).limit(1).show(truncate=False)
+
+
 if __name__ == '__main__':
     # Base functions
     spark_sess = create_session()
@@ -70,7 +83,9 @@ if __name__ == '__main__':
     # Business queries
     avg_salary(df_exploded)
     top_bottom_jobs(df_exploded)
+    current_most_money_maker(df_exploded)
     
+
 
 
 
